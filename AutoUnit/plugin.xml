@@ -86,7 +86,7 @@
             </separator>
          </menu>
          <action
-               class="autounit.popup.actions.CreatenewUnitTestClassAction"
+               class="eu.ws.e4.autounit.popup.CreatenewUnitTestClassAction"
                enablesFor="1"
                id="AutoUnit.newAction"
                label="Create new unit test class"

@@ -1,4 +1,4 @@
-package autounit.popup.actions;
+package eu.ws.e4.autounit.popup;
 
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jface.action.IAction;
