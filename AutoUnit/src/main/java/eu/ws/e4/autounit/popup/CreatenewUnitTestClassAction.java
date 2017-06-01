@@ -1,5 +1,7 @@
 package eu.ws.e4.autounit.popup;
 
+import java.io.File;
+
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
@@ -8,6 +10,9 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IActionDelegate;
 import org.eclipse.ui.IObjectActionDelegate;
 import org.eclipse.ui.IWorkbenchPart;
+
+import eu.ws.e4.autounit.file.TestFilePathRetriever;
+import eu.ws.e4.autounit.junit.JunitTestClassCreator;
 
 public class CreatenewUnitTestClassAction implements IObjectActionDelegate {
 
@@ -48,15 +53,35 @@ public class CreatenewUnitTestClassAction implements IObjectActionDelegate {
 	System.out.println("Selection:" + selection);
 
 	if (selection instanceof TreeSelection) {
-	    TreeSelection treeSelection = (TreeSelection) selection;
-	    ICompilationUnit firstSelectedClass = (ICompilationUnit) treeSelection.getFirstElement();
-	    System.out.println("Selected element:" + firstSelectedClass);
-	    
-	    String javaFileName = firstSelectedClass.getElementName();
-	    System.out.println("Selected element:" + firstSelectedClass);
-	    
+	    ICompilationUnit firstSelectedClass = getSelectedJavaClass(selection);
+
+	    System.out.println("Selected java file name:" + firstSelectedClass.getElementName());
+
+	    if (testFileAlreadyExists(firstSelectedClass)) {
+		System.out.println("Test file exists, switch to it: " + firstSelectedClass.getPath());
+
+	    } else {
+		System.out.println("Test file does not exists, creatibg it for: " + firstSelectedClass.getPath());
+
+		JunitTestClassCreator testCreator = new JunitTestClassCreator(firstSelectedClass);
+		testCreator.createTestClass();
+		
+	    }
+
 	}
 
+    }
+
+    private boolean testFileAlreadyExists(ICompilationUnit firstSelectedClass) {
+	String testFilePath = TestFilePathRetriever.of(firstSelectedClass.getPath().toString()).getTestFilePath();
+	return new File(testFilePath).exists();
+    }
+
+    private ICompilationUnit getSelectedJavaClass(ISelection selection) {
+	TreeSelection treeSelection = (TreeSelection) selection;
+	ICompilationUnit firstSelectedClass = (ICompilationUnit) treeSelection.getFirstElement();
+	System.out.println("Selected element:" + firstSelectedClass);
+	return firstSelectedClass;
     }
 
 }
