@@ -65,11 +65,8 @@ public class CreatenewUnitTestClassAction implements IObjectActionDelegate {
 
 		JunitTestClassCreator testCreator = new JunitTestClassCreator(firstSelectedClass);
 		testCreator.createTestClass();
-		
 	    }
-
 	}
-
     }
 
     private boolean testFileAlreadyExists(ICompilationUnit firstSelectedClass) {
