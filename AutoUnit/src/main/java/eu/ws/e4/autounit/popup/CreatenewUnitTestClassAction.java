@@ -12,7 +12,7 @@ import org.eclipse.ui.IObjectActionDelegate;
 import org.eclipse.ui.IWorkbenchPart;
 
 import eu.ws.e4.autounit.file.TestFilePathRetriever;
-import eu.ws.e4.autounit.junit.JunitTestClassCreator;
+import eu.ws.e4.autounit.junit.JunitTestFileCreator;
 
 public class CreatenewUnitTestClassAction implements IObjectActionDelegate {
 
@@ -61,9 +61,9 @@ public class CreatenewUnitTestClassAction implements IObjectActionDelegate {
 		System.out.println("Test file exists, switch to it: " + firstSelectedClass.getPath());
 
 	    } else {
-		System.out.println("Test file does not exists, creatibg it for: " + firstSelectedClass.getPath());
+		System.out.println("Test file does not exists, creating it for: " + firstSelectedClass.getPath());
 
-		JunitTestClassCreator testCreator = new JunitTestClassCreator(firstSelectedClass);
+		JunitTestFileCreator testCreator = new JunitTestFileCreator(firstSelectedClass);
 		testCreator.createTestClass();
 	    }
 	}
