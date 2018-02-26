@@ -4,16 +4,16 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 public class AutoUnitPlugin extends AbstractUIPlugin {
 
-    private static AutoUnitPlugin instance;
+	private static AutoUnitPlugin instance;
 
-    private AutoUnitPlugin() {
-    }
-
-    public static AutoUnitPlugin getInstance() {
-	if (null == instance) {
-	    instance = new AutoUnitPlugin();
+	private AutoUnitPlugin() {
 	}
-	return instance;
-    }
+
+	public static AutoUnitPlugin getInstance() {
+		if (null == instance) {
+			instance = new AutoUnitPlugin();
+		}
+		return instance;
+	}
 
 }

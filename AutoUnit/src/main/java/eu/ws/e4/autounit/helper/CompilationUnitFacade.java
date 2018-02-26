@@ -13,63 +13,62 @@ import org.eclipse.jdt.internal.core.SourceField;
 
 public class CompilationUnitFacade {
 
-    private final ICompilationUnit javaClass;
+	private final ICompilationUnit javaClass;
 
-    public CompilationUnitFacade(ICompilationUnit javaClass) {
-	super();
-	this.javaClass = javaClass;
-    }
+	public CompilationUnitFacade(ICompilationUnit javaClass) {
+		super();
+		this.javaClass = javaClass;
+	}
 
-    /**
-     * Returns all non private methods of the underlying java class
-     */
-    public List<IMethod> getAllTestableMethods() {
-	List<IMethod> result = new ArrayList<>();
+	/**
+	 * Returns all non private methods of the underlying java class
+	 */
+	public List<IMethod> getAllTestableMethods() {
+		List<IMethod> result = new ArrayList<>();
 
-	try {
-	    IMethod[] methods = javaClass.findPrimaryType().getMethods();
+		try {
+			IMethod[] methods = javaClass.findPrimaryType().getMethods();
 
-	    for (int i = 0; i < methods.length; i++) {
-		if (isMethodTestable(methods[i])) {
-		    result.add(methods[i]);
+			for (int i = 0; i < methods.length; i++) {
+				if (isMethodTestable(methods[i])) {
+					result.add(methods[i]);
+				}
+			}
+
+		} catch (JavaModelException e) {
+			e.printStackTrace();
 		}
-	    }
-
-	} catch (JavaModelException e) {
-	    e.printStackTrace();
-	}
-	return result;
-    }
-
-    private boolean isMethodTestable(IMethod iMethod) throws JavaModelException {
-	int flags = iMethod.getFlags();
-
-	if (Flags.isPublic(flags) || Flags.isPackageDefault(flags) || Flags.isProtected(flags)) {
-	    return true;
+		return result;
 	}
 
-	return false;
-    }
+	private boolean isMethodTestable(IMethod iMethod) throws JavaModelException {
+		int flags = iMethod.getFlags();
 
-    public List<SourceField> getMockableFields() {
-	List<SourceField> result = new ArrayList<>();
+		if (Flags.isPublic(flags) || Flags.isPackageDefault(flags) || Flags.isProtected(flags)) {
+			return true;
+		}
 
-	try {
-	    IField[] fields = javaClass.findPrimaryType().getFields();
-	    for (int i = 0; i < fields.length; i++) {
-		SourceField iField = (SourceField) fields[i];
-		
-		System.out.println("Field name:" + iField.getElementName());
-		System.out.println("Field type signature:" + Signature.toString(iField.getTypeSignature()));
-		result.add(iField);
-	    }
-	    
-	    
-	} catch (JavaModelException e) {
-	    e.printStackTrace();
+		return false;
 	}
 
-	return result;
-    }
+	public List<SourceField> getMockableFields() {
+		List<SourceField> result = new ArrayList<>();
+
+		try {
+			IField[] fields = javaClass.findPrimaryType().getFields();
+			for (int i = 0; i < fields.length; i++) {
+				SourceField iField = (SourceField) fields[i];
+
+				System.out.println("Field name:" + iField.getElementName());
+				System.out.println("Field type signature:" + Signature.toString(iField.getTypeSignature()));
+				result.add(iField);
+			}
+
+		} catch (JavaModelException e) {
+			e.printStackTrace();
+		}
+
+		return result;
+	}
 
 }

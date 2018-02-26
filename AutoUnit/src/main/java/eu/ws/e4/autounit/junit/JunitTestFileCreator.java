@@ -12,43 +12,43 @@ import org.eclipse.jdt.internal.core.SourceField;
 import eu.ws.e4.autounit.helper.CompilationUnitFacade;
 
 public class JunitTestFileCreator {
-    private final ICompilationUnit javaClass;
+	private final ICompilationUnit javaClass;
 
-    public JunitTestFileCreator(ICompilationUnit javaClass) {
-	super();
-	this.javaClass = javaClass;
-    }
-
-    public String createTestClass() {
-	CompilationUnitFacade cuFacade = new CompilationUnitFacade(javaClass);
-
-	List<IMethod> allTestableMethods = cuFacade.getAllTestableMethods();
-	System.out.println("Methods: " + allTestableMethods.size());
-
-	List<SourceField> mockableFields = cuFacade.getMockableFields();
-	System.out.println("Fields: " + mockableFields.size());
-
-	createFileSkeletonFromTemplate();
-
-	return "";
-
-    }
-
-    private void createFileSkeletonFromTemplate() {
-	File templateFile = new File("/main/resources/templates/mockito/MockitoBasicTemplate.javatmpl");
-	File newTestClassFile = new File("/main/resources/templates/mockito/MockitoBasicTemplate.java");
-	try {
-	    FileUtils.copyFile(templateFile, newTestClassFile);
-	} catch (IOException e) {
-	    // TODO Auto-generated catch block
-	    e.printStackTrace();
+	public JunitTestFileCreator(ICompilationUnit javaClass) {
+		super();
+		this.javaClass = javaClass;
 	}
-    }
 
-    private void getClassStructure(Class clazz) {
+	public String createTestClass() {
+		CompilationUnitFacade cuFacade = new CompilationUnitFacade(javaClass);
 
-	clazz.getEnclosingMethod();
+		List<IMethod> allTestableMethods = cuFacade.getAllTestableMethods();
+		System.out.println("Methods: " + allTestableMethods.size());
 
-    }
+		List<SourceField> mockableFields = cuFacade.getMockableFields();
+		System.out.println("Fields: " + mockableFields.size());
+
+		createFileSkeletonFromTemplate();
+
+		return "";
+
+	}
+
+	private void createFileSkeletonFromTemplate() {
+		File templateFile = new File("/main/resources/templates/mockito/MockitoBasicTemplate.javatmpl");
+		File newTestClassFile = new File("/main/resources/templates/mockito/MockitoBasicTemplate.java");
+		try {
+			FileUtils.copyFile(templateFile, newTestClassFile);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	private void getClassStructure(Class clazz) {
+
+		clazz.getEnclosingMethod();
+
+	}
 
 }
