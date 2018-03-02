@@ -10,16 +10,19 @@ import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.internal.core.SourceField;
 
 import eu.ws.e4.autounit.helper.CompilationUnitFacade;
+import eu.ws.e4.autounit.junit.creator.mockito.UnitTestBaseCreator;
 
 public class JunitTestFileCreator {
 	private final ICompilationUnit javaClass;
 
-	public JunitTestFileCreator(ICompilationUnit javaClass) {
-		super();
+	private final String testFilePath;
+
+	public JunitTestFileCreator(ICompilationUnit javaClass, String testFilePath) {
 		this.javaClass = javaClass;
+		this.testFilePath = testFilePath;
 	}
 
-	public String createTestClass() {
+	public void createTestClass() {
 		CompilationUnitFacade cuFacade = new CompilationUnitFacade(javaClass);
 
 		List<IMethod> allTestableMethods = cuFacade.getAllTestableMethods();
@@ -28,27 +31,22 @@ public class JunitTestFileCreator {
 		List<SourceField> mockableFields = cuFacade.getMockableFields();
 		System.out.println("Fields: " + mockableFields.size());
 
-		createFileSkeletonFromTemplate();
+		String testFileContent = createTestFileContent();
 
-		return "";
-
-	}
-
-	private void createFileSkeletonFromTemplate() {
-		File templateFile = new File("/main/resources/templates/mockito/MockitoBasicTemplate.javatmpl");
-		File newTestClassFile = new File("/main/resources/templates/mockito/MockitoBasicTemplate.java");
 		try {
-			FileUtils.copyFile(templateFile, newTestClassFile);
+			System.out.println("About to create file: " + testFilePath);
+			FileUtils.write(new File(testFilePath), testFileContent, "UTF-8");
+			System.out.println("File got created: " + testFilePath);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+
 	}
 
-	private void getClassStructure(Class clazz) {
-
-		clazz.getEnclosingMethod();
-
+	private String createTestFileContent() {
+		String importStatements = new UnitTestBaseCreator().getImportStatements();
+		return importStatements;
 	}
 
 }

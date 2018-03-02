@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: AutoUnit
-Bundle-SymbolicName: AutoUnit;singleton:=true
+Bundle-SymbolicName: eu.vs.unittesting.AutoUnit;singleton:=true
 Bundle-Version: 1.0.0.qualifier
 Bundle-ClassPath: .,
  src/main/java/,

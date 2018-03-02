@@ -1,7 +1,6 @@
 package eu.ws.e4.autounit.file;
 
-import java.io.File;
-
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 
 /**
@@ -10,7 +9,7 @@ import org.apache.commons.lang3.Validate;
  * Currently works only for maven projects. If needed, extract an interface out of it, and create implementations for different project structures.
  */
 public class TestFilePathRetriever {
-	private static final String SEPARATOR = File.separator;
+	private static final String SEPARATOR = "/";
 	private static final String MAVEN_TEST_PATR_PART = SEPARATOR + "src" + SEPARATOR + "test" + SEPARATOR + "java" + SEPARATOR;
 	private static final String MAVEN_JAVA_PATH_PART = SEPARATOR + "src" + SEPARATOR + "main" + SEPARATOR + "java" + SEPARATOR;
 
@@ -27,7 +26,10 @@ public class TestFilePathRetriever {
 	}
 
 	public String getTestFilePath() {
-		return classFilePath.replace(MAVEN_JAVA_PATH_PART, MAVEN_TEST_PATR_PART);
+		String path = classFilePath.replace(MAVEN_JAVA_PATH_PART, MAVEN_TEST_PATR_PART);
+		path = StringUtils.removeEnd(path, ".java");
+		path = path + "Test.java";
+		return path;
 	}
 
 }

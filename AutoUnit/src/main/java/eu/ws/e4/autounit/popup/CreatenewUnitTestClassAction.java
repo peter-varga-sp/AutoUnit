@@ -2,7 +2,11 @@ package eu.ws.e4.autounit.popup;
 
 import java.io.File;
 
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.jdt.core.ICompilationUnit;
+import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.TreeSelection;
@@ -62,16 +66,37 @@ public class CreatenewUnitTestClassAction implements IObjectActionDelegate {
 
 			} else {
 				System.out.println("Test file does not exists, creating it for: " + firstSelectedClass.getPath());
+				String testFilePath = testFilePath(firstSelectedClass);
 
-				JunitTestFileCreator testCreator = new JunitTestFileCreator(firstSelectedClass);
+				JunitTestFileCreator testCreator = new JunitTestFileCreator(firstSelectedClass, testFilePath);
 				testCreator.createTestClass();
 			}
 		}
 	}
 
 	private boolean testFileAlreadyExists(ICompilationUnit firstSelectedClass) {
-		String testFilePath = TestFilePathRetriever.of(firstSelectedClass.getPath().toString()).getTestFilePath();
+		String testFilePath = testFilePath(firstSelectedClass);
 		return new File(testFilePath).exists();
+	}
+
+	private String testFilePath(ICompilationUnit firstSelectedClass) {
+		String classFilePath = getClassFilePath(firstSelectedClass);
+		String testFilePath = TestFilePathRetriever.of(classFilePath).getTestFilePath();
+		return testFilePath;
+	}
+
+	private String getClassFilePath(ICompilationUnit firstSelectedClass) {
+		try {
+			IResource underlyingResource = firstSelectedClass.getUnderlyingResource();
+			if (underlyingResource.getType() == IResource.FILE) {
+				IFile ifile = (IFile) underlyingResource;
+				return ifile.getRawLocation().toString();
+			}
+		} catch (JavaModelException e) {
+
+		}
+		return null;
+
 	}
 
 	private ICompilationUnit getSelectedJavaClass(ISelection selection) {
