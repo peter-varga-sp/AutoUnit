@@ -4,7 +4,6 @@ import java.io.File;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jface.action.IAction;
@@ -61,6 +60,9 @@ public class CreatenewUnitTestClassAction implements IObjectActionDelegate {
 
 			System.out.println("Selected java file name:" + firstSelectedClass.getElementName());
 
+			if (testClassSelected(firstSelectedClass)) {
+				return;
+			}
 			if (testFileAlreadyExists(firstSelectedClass)) {
 				System.out.println("Test file exists, switch to it: " + firstSelectedClass.getPath());
 
@@ -72,6 +74,11 @@ public class CreatenewUnitTestClassAction implements IObjectActionDelegate {
 				testCreator.createTestClass();
 			}
 		}
+	}
+
+	private boolean testClassSelected(ICompilationUnit firstSelectedClass) {
+		String elementName = firstSelectedClass.getElementName();
+		return elementName.endsWith("Test.java");
 	}
 
 	private boolean testFileAlreadyExists(ICompilationUnit firstSelectedClass) {

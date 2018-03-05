@@ -10,6 +10,7 @@ import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.internal.core.SourceField;
 
 import eu.ws.e4.autounit.helper.CompilationUnitFacade;
+import eu.ws.e4.autounit.junit.creator.mockito.TestRunnerDefinition;
 import eu.ws.e4.autounit.junit.creator.mockito.UnitTestBaseCreator;
 
 public class JunitTestFileCreator {
@@ -31,11 +32,14 @@ public class JunitTestFileCreator {
 		List<SourceField> mockableFields = cuFacade.getMockableFields();
 		System.out.println("Fields: " + mockableFields.size());
 
-		String testFileContent = createTestFileContent();
+		File newTestFile = new File(testFilePath);
+		String testClassName = newTestFile.getName().replace(".java", "");
+
+		String testFileContent = createTestFileContent(testClassName);
 
 		try {
 			System.out.println("About to create file: " + testFilePath);
-			FileUtils.write(new File(testFilePath), testFileContent, "UTF-8");
+			FileUtils.write(newTestFile, testFileContent, "UTF-8");
 			System.out.println("File got created: " + testFilePath);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -44,9 +48,9 @@ public class JunitTestFileCreator {
 
 	}
 
-	private String createTestFileContent() {
-		String importStatements = new UnitTestBaseCreator().getImportStatements();
-		return importStatements;
+	private String createTestFileContent(String testClassName) {
+		UnitTestBaseCreator unitTestBaseCreator = new UnitTestBaseCreator(TestRunnerDefinition.Junit, testClassName);
+		return unitTestBaseCreator.create();
 	}
 
 }
