@@ -8,13 +8,17 @@ import eu.ws.e4.autounit.junit.creator.mockito.TestRunnerDefinition;
 
 public class CreateTestFileContentParameter {
 
+	private final String nameOfClassUnderTest;
+
 	private final String testClassName;
 
 	private final TestRunnerDefinition testRunner;
 
 	private final List<IMethod> allTestableMethods;
 
-	public CreateTestFileContentParameter(String testClassName, TestRunnerDefinition testRunner, List<IMethod> allTestableMethods) {
+	public CreateTestFileContentParameter(String nameOfClassUnderTest, String testClassName, TestRunnerDefinition testRunner,
+			List<IMethod> allTestableMethods) {
+		this.nameOfClassUnderTest = nameOfClassUnderTest;
 		this.testClassName = testClassName;
 		this.testRunner = testRunner;
 		this.allTestableMethods = allTestableMethods;
@@ -30,5 +34,9 @@ public class CreateTestFileContentParameter {
 
 	public List<IMethod> getAllTestableMethods() {
 		return allTestableMethods;
+	}
+
+	public String getNameOfClassUnderTest() {
+		return nameOfClassUnderTest;
 	}
 }

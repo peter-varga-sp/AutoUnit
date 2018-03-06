@@ -1,6 +1,7 @@
 package eu.ws.e4.autounit.junit.creator.mockito;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.text.WordUtils;
 
 import eu.ws.e4.autounit.junit.CreateTestFileContentParameter;
 
@@ -21,15 +22,18 @@ class UnitTestSkeletonCreator {
 
 	private static final String[] TEST_CLASS_SKELETON = {
 			"public class TEST_CLASS_NAME {",
+			"//VARIABLES",
 			"//TEST_METHODS",
 			"}"
 	};
 
 	private final CreateTestFileContentParameter parameterObject;
 
+	private final String testedInstanceName;
+
 	UnitTestSkeletonCreator(CreateTestFileContentParameter parameterObject) {
-		super();
 		this.parameterObject = parameterObject;
+		this.testedInstanceName = WordUtils.uncapitalize(parameterObject.getNameOfClassUnderTest());
 	}
 
 	public String create() {
@@ -44,10 +48,17 @@ class UnitTestSkeletonCreator {
 		String skeleton = StringUtils.join(TEST_CLASS_SKELETON, "\n");
 		skeleton = skeleton.replace("TEST_CLASS_NAME", parameterObject.getTestClassName());
 
+		skeleton = skeleton.replace("//VARIABLES", instantiateClassUnderTest());
+
 		return strRunnerDef + skeleton;
 	}
 
 	private String getImportStatements() {
 		return StringUtils.join(IMPORTS, ";\n") + ";\n";
+	}
+
+	private String instantiateClassUnderTest() {
+		return "\tprivate final " + parameterObject.getNameOfClassUnderTest() + " " + testedInstanceName +
+				" = new " + parameterObject.getNameOfClassUnderTest() + "();";
 	}
 }

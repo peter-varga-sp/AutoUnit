@@ -21,7 +21,7 @@ public class UnitTestCreator {
 
 		String testMethods = createTestMethods();
 		result = result.replace("//TEST_METHODS", testMethods);
-		
+
 		return result;
 	}
 
@@ -29,7 +29,7 @@ public class UnitTestCreator {
 		String result = "";
 
 		for (IMethod method : parameterObject.getAllTestableMethods()) {
-			result = result + new UnitTestMethodCreator(method).create();
+			result = result + new UnitTestMethodCreator(method, parameterObject).create();
 		}
 
 		return result;
