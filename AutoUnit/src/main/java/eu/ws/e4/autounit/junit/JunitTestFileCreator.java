@@ -11,7 +11,7 @@ import org.eclipse.jdt.internal.core.SourceField;
 
 import eu.ws.e4.autounit.helper.CompilationUnitFacade;
 import eu.ws.e4.autounit.junit.creator.mockito.TestRunnerDefinition;
-import eu.ws.e4.autounit.junit.creator.mockito.UnitTestBaseCreator;
+import eu.ws.e4.autounit.junit.creator.mockito.UnitTestCreator;
 
 public class JunitTestFileCreator {
 	private final ICompilationUnit javaClass;
@@ -35,7 +35,10 @@ public class JunitTestFileCreator {
 		File newTestFile = new File(testFilePath);
 		String testClassName = newTestFile.getName().replace(".java", "");
 
-		String testFileContent = createTestFileContent(testClassName);
+		CreateTestFileContentParameter parameterObject = new CreateTestFileContentParameter(testClassName, TestRunnerDefinition.Junit,
+				allTestableMethods);
+
+		String testFileContent = createTestFileContent(parameterObject);
 
 		try {
 			System.out.println("About to create file: " + testFilePath);
@@ -48,8 +51,8 @@ public class JunitTestFileCreator {
 
 	}
 
-	private String createTestFileContent(String testClassName) {
-		UnitTestBaseCreator unitTestBaseCreator = new UnitTestBaseCreator(TestRunnerDefinition.Junit, testClassName);
+	private String createTestFileContent(CreateTestFileContentParameter parameterObject) {
+		UnitTestCreator unitTestBaseCreator = new UnitTestCreator(parameterObject);
 		return unitTestBaseCreator.create();
 	}
 
