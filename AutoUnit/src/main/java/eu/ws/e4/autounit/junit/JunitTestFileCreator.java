@@ -35,9 +35,11 @@ public class JunitTestFileCreator {
 		File newTestFile = new File(testFilePath);
 		String testClassName = newTestFile.getName().replace(".java", "");
 		String nameOfClassUnderTest = javaClass.getElementName().replace(".java", "");
-		
+
+		String packegeDeclaration = cuFacade.getPackegeDeclaration();
+
 		CreateTestFileContentParameter parameterObject = new CreateTestFileContentParameter(nameOfClassUnderTest, testClassName,
-				TestRunnerDefinition.Junit, allTestableMethods);
+				TestRunnerDefinition.Junit, allTestableMethods, packegeDeclaration);
 
 		String testFileContent = createTestFileContent(parameterObject);
 

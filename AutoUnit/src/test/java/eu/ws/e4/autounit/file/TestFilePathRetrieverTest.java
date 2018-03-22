@@ -1,8 +1,7 @@
 package eu.ws.e4.autounit.file;
 
 import static org.hamcrest.Matchers.containsString;
-
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertThat;
 
 import org.junit.Test;
 

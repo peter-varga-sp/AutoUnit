@@ -1,25 +1,6 @@
 package eu.ws.e4.autounit.helper;
 
-import static org.junit.Assert.assertNotNull;
-
-import java.io.File;
-
-import org.apache.commons.io.FileUtils;
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IWorkspace;
-import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
-import org.eclipse.jdt.core.ICompilationUnit;
-import org.eclipse.jdt.core.IJavaElement;
-import org.eclipse.jdt.core.IType;
-import org.eclipse.jdt.core.JavaCore;
-import org.eclipse.jdt.core.dom.AST;
-import org.eclipse.jdt.core.dom.ASTParser;
-import org.eclipse.jdt.core.dom.CompilationUnit;
-import org.eclipse.osgi.internal.framework.BundleContextImpl;
 import org.junit.Test;
-import org.osgi.framework.BundleContext;
 
 public class CompilationUnitFacadeTest {
 

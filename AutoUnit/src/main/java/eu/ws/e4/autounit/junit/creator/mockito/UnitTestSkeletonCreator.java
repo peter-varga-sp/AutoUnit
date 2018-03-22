@@ -37,7 +37,7 @@ class UnitTestSkeletonCreator {
 	}
 
 	public String create() {
-		String result = getImportStatements();
+		String result = getPackageDeclaration() + getImportStatements();
 		result = result + "\n" + getUnitTestClassSkeleton();
 		return result;
 	}
@@ -51,6 +51,10 @@ class UnitTestSkeletonCreator {
 		skeleton = skeleton.replace("//VARIABLES", instantiateClassUnderTest());
 
 		return strRunnerDef + skeleton;
+	}
+
+	private String getPackageDeclaration() {
+		return "package " + parameterObject.getPackegeDeclaration() + ";\n\\n";
 	}
 
 	private String getImportStatements() {

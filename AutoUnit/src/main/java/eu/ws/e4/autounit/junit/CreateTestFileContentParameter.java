@@ -15,13 +15,16 @@ public class CreateTestFileContentParameter {
 	private final TestRunnerDefinition testRunner;
 
 	private final List<IMethod> allTestableMethods;
+	
+	private final String packegeDeclaration;
 
 	public CreateTestFileContentParameter(String nameOfClassUnderTest, String testClassName, TestRunnerDefinition testRunner,
-			List<IMethod> allTestableMethods) {
+			List<IMethod> allTestableMethods, String packegeDeclaration) {
 		this.nameOfClassUnderTest = nameOfClassUnderTest;
 		this.testClassName = testClassName;
 		this.testRunner = testRunner;
 		this.allTestableMethods = allTestableMethods;
+		this.packegeDeclaration = packegeDeclaration;
 	}
 
 	public String getTestClassName() {
@@ -38,5 +41,9 @@ public class CreateTestFileContentParameter {
 
 	public String getNameOfClassUnderTest() {
 		return nameOfClassUnderTest;
+	}
+
+	public String getPackegeDeclaration() {
+		return packegeDeclaration;
 	}
 }

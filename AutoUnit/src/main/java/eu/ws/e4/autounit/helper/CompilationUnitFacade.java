@@ -7,6 +7,7 @@ import org.eclipse.jdt.core.Flags;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IField;
 import org.eclipse.jdt.core.IMethod;
+import org.eclipse.jdt.core.IPackageDeclaration;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.Signature;
 import org.eclipse.jdt.internal.core.SourceField;
@@ -69,6 +70,18 @@ public class CompilationUnitFacade {
 		}
 
 		return result;
+	}
+
+	public String getPackegeDeclaration() {
+		try {
+			IPackageDeclaration[] packageDeclarations = javaClass.getPackageDeclarations();
+
+			return packageDeclarations[0].getElementName();
+		} catch (JavaModelException e) {
+			e.printStackTrace();
+		}
+
+		return "";
 	}
 
 }
