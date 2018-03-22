@@ -1,10 +1,12 @@
 package eu.ws.e4.autounit.junit.creator.mockito;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.text.WordUtils;
 import org.eclipse.jdt.core.ILocalVariable;
 import org.eclipse.jdt.core.IMethod;
@@ -91,25 +93,27 @@ class UnitTestMethodCreator {
 	}
 
 	private String getParameterDeclarationLines() {
-		String result = "";
+		ArrayList<String> parameterDeclarations = new ArrayList<>();
 
 		try {
 			for (int i = 0; i < method.getParameters().length; i++) {
-				ILocalVariable param = method.getParameters()[i];
-				LocalVariable locParam = (LocalVariable) param;
-
-				Object elementInfo = locParam.getElementInfo();
-				elementInfo.toString();
-
-				String typeSignature = param.getTypeSignature();
-				String signatureSimpleName = Signature.getSignatureSimpleName(typeSignature);
-
-				result = result + signatureSimpleName + " " + param.getElementName() + " = new " + signatureSimpleName + "();\n";
+				String parameterDeclaration = createParameterDeclarationLine(i);
+				parameterDeclarations.add(parameterDeclaration);
 			}
 		} catch (JavaModelException e) {
 
 		}
-		return result;
+		return StringUtils.join(parameterDeclarations, "\n");
+	}
+
+	private String createParameterDeclarationLine(int i) throws JavaModelException {
+		LocalVariable param = (LocalVariable) method.getParameters()[i];
+		String typeSignature = param.getTypeSignature();
+		String signatureSimpleName = Signature.getSignatureSimpleName(typeSignature);
+
+		String constructorCall = new ConstructorCallCreator().getConstructorCall(param);
+
+		return signatureSimpleName + " " + param.getElementName() + " = " + constructorCall + ";";
 	}
 
 	private String getMethodCallLine() {

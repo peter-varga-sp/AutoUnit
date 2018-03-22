@@ -54,7 +54,7 @@ class UnitTestSkeletonCreator {
 	}
 
 	private String getPackageDeclaration() {
-		return "package " + parameterObject.getPackegeDeclaration() + ";\n\\n";
+		return "package " + parameterObject.getPackegeDeclaration() + ";\n\n";
 	}
 
 	private String getImportStatements() {
