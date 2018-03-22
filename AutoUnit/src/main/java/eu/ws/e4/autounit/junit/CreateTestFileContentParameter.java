@@ -3,7 +3,9 @@ package eu.ws.e4.autounit.junit;
 import java.util.List;
 
 import org.eclipse.jdt.core.IMethod;
+import org.eclipse.jdt.internal.core.SourceField;
 
+import eu.ws.e4.autounit.helper.CompilationUnitFacade;
 import eu.ws.e4.autounit.junit.creator.mockito.TestRunnerDefinition;
 
 public class CreateTestFileContentParameter {
@@ -12,19 +14,28 @@ public class CreateTestFileContentParameter {
 
 	private final String testClassName;
 
-	private final TestRunnerDefinition testRunner;
+	private final CompilationUnitFacade cuFacade;
 
-	private final List<IMethod> allTestableMethods;
-	
-	private final String packegeDeclaration;
+	private final GuiOptionsHolder guiOptionsHolder;
 
-	public CreateTestFileContentParameter(String nameOfClassUnderTest, String testClassName, TestRunnerDefinition testRunner,
-			List<IMethod> allTestableMethods, String packegeDeclaration) {
+	public CreateTestFileContentParameter(String nameOfClassUnderTest, String testClassName, CompilationUnitFacade cuFacade,
+			GuiOptionsHolder guiOptionsHolder) {
 		this.nameOfClassUnderTest = nameOfClassUnderTest;
 		this.testClassName = testClassName;
-		this.testRunner = testRunner;
-		this.allTestableMethods = allTestableMethods;
-		this.packegeDeclaration = packegeDeclaration;
+		this.cuFacade = cuFacade;
+		this.guiOptionsHolder = guiOptionsHolder;
+	}
+
+	public String getPackegeDeclaration() {
+		return cuFacade.getPackegeDeclaration();
+	}
+
+	public List<IMethod> getAllTestableMethods() {
+		return cuFacade.getAllTestableMethods();
+	}
+
+	public List<SourceField> getMockableFields() {
+		return cuFacade.getMockableFields();
 	}
 
 	public String getTestClassName() {
@@ -32,18 +43,18 @@ public class CreateTestFileContentParameter {
 	}
 
 	public TestRunnerDefinition getTestRunner() {
-		return testRunner;
-	}
-
-	public List<IMethod> getAllTestableMethods() {
-		return allTestableMethods;
+		return guiOptionsHolder.getTestRunnerDefinition();
 	}
 
 	public String getNameOfClassUnderTest() {
 		return nameOfClassUnderTest;
 	}
 
-	public String getPackegeDeclaration() {
-		return packegeDeclaration;
+	public CompilationUnitFacade getCuFacade() {
+		return cuFacade;
+	}
+
+	public GuiOptionsHolder getGuiOptionsHolder() {
+		return guiOptionsHolder;
 	}
 }

@@ -1,9 +1,22 @@
 package eu.ws.e4.autounit.junit.creator.mockito;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
+import javax.swing.plaf.ListUI;
+
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.text.WordUtils;
+import org.eclipse.jdt.core.IAnnotation;
+import org.eclipse.jdt.core.JavaModelException;
+import org.eclipse.jdt.core.Signature;
+import org.eclipse.jdt.internal.core.SourceField;
 
 import eu.ws.e4.autounit.junit.CreateTestFileContentParameter;
+import junit.textui.TestRunner;
 
 class UnitTestSkeletonCreator {
 
@@ -47,8 +60,7 @@ class UnitTestSkeletonCreator {
 
 		String skeleton = StringUtils.join(TEST_CLASS_SKELETON, "\n");
 		skeleton = skeleton.replace("TEST_CLASS_NAME", parameterObject.getTestClassName());
-
-		skeleton = skeleton.replace("//VARIABLES", instantiateClassUnderTest());
+		skeleton = skeleton.replace("//VARIABLES", declareFields());
 
 		return strRunnerDef + skeleton;
 	}
@@ -61,8 +73,67 @@ class UnitTestSkeletonCreator {
 		return StringUtils.join(IMPORTS, ";\n") + ";\n";
 	}
 
+	private String declareFields() {
+		return instantiateFields() + "\n\n" + instantiateClassUnderTest();
+	}
+
+	private String instantiateFields() {
+		List<String> mockableFieldDeclarations = new ArrayList<>();
+		for (SourceField field : parameterObject.getMockableFields()) {
+			mockableFieldDeclarations.add(instantiateMockableField(field));
+		}
+		return StringUtils.join(mockableFieldDeclarations, "\n");
+	}
+
+	private String instantiateMockableField(SourceField field) {
+		String typeSignature;
+		try {
+			typeSignature = field.getTypeSignature();
+		} catch (JavaModelException e) {
+			return "";
+		}
+		String signatureSimpleName = Signature.getSignatureSimpleName(typeSignature);
+
+		String result = "private " + signatureSimpleName + " " + field.getElementName() + ";";
+
+		List<IAnnotation> annotations = getAnnotationsOf(field);
+		if (hasIocAnnotation(annotations)) {
+			result = "@Mock\n" + result;
+		}
+
+		return result;
+	}
+
+	private boolean hasIocAnnotation(List<IAnnotation> annotations) {
+		if (CollectionUtils.isEmpty(annotations)) {
+			return false;
+		}
+
+		for (IAnnotation iAnnotation : annotations) {
+			String elementName = iAnnotation.getElementName();
+			if (elementName.equals("Autowired")) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	private List<IAnnotation> getAnnotationsOf(SourceField field) {
+		try {
+			IAnnotation[] annotations = field.getAnnotations();
+			return Arrays.asList(annotations);
+		} catch (JavaModelException e) {
+			return Collections.emptyList();
+		}
+	}
+
 	private String instantiateClassUnderTest() {
-		return "\tprivate final " + parameterObject.getNameOfClassUnderTest() + " " + testedInstanceName +
-				" = new " + parameterObject.getNameOfClassUnderTest() + "();";
+		if (parameterObject.getTestRunner().isFieldMockingSupported()) {
+			return "\t@InjectMocks\n" + "\tprivate " + parameterObject.getNameOfClassUnderTest() + " " + testedInstanceName + ";";
+		} else {
+			return "\tprivate final " + parameterObject.getNameOfClassUnderTest() + " " + testedInstanceName +
+					" = new " + parameterObject.getNameOfClassUnderTest() + "();";
+		}
 	}
 }

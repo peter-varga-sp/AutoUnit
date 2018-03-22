@@ -28,7 +28,6 @@ public class JunitTestFileCreator {
 
 		List<IMethod> allTestableMethods = cuFacade.getAllTestableMethods();
 		System.out.println("Methods: " + allTestableMethods.size());
-
 		List<SourceField> mockableFields = cuFacade.getMockableFields();
 		System.out.println("Fields: " + mockableFields.size());
 
@@ -36,10 +35,12 @@ public class JunitTestFileCreator {
 		String testClassName = newTestFile.getName().replace(".java", "");
 		String nameOfClassUnderTest = javaClass.getElementName().replace(".java", "");
 
-		String packegeDeclaration = cuFacade.getPackegeDeclaration();
+		// TODO get it from GUI
+		GuiOptionsHolder guiOptionsHolder = new GuiOptionsHolder();
+		guiOptionsHolder.setTestRunnerDefinition(TestRunnerDefinition.Mockito);
 
-		CreateTestFileContentParameter parameterObject = new CreateTestFileContentParameter(nameOfClassUnderTest, testClassName,
-				TestRunnerDefinition.Junit, allTestableMethods, packegeDeclaration);
+		CreateTestFileContentParameter parameterObject = new CreateTestFileContentParameter(nameOfClassUnderTest, testClassName, cuFacade,
+				guiOptionsHolder);
 
 		String testFileContent = createTestFileContent(parameterObject);
 

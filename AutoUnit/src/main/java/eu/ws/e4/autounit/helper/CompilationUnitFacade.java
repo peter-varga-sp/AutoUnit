@@ -54,7 +54,6 @@ public class CompilationUnitFacade {
 
 	public List<SourceField> getMockableFields() {
 		List<SourceField> result = new ArrayList<>();
-
 		try {
 			IField[] fields = javaClass.findPrimaryType().getFields();
 			for (int i = 0; i < fields.length; i++) {
