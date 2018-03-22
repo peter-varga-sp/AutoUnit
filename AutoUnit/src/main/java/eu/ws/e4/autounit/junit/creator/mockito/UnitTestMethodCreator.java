@@ -34,9 +34,10 @@ class UnitTestMethodCreator {
 
 		methodBody.append("\n@Test\n");
 		methodBody.append("public void " + calculateTestMethodName() + "() {").append("\n");
-		methodBody.append(getBeanDeclatationLine()).append("\n");
-		methodBody.append(getParameterDeclarationLines()).append("\n");
+		// methodBody.append(getBeanDeclatationLine()).append("\n");
+		methodBody.append(getParameterDeclarationLines()).append("\n\n");
 		methodBody.append(getMethodCallLine()).append("\n");
+		methodBody.append(getCheckResultValueLine()).append("\n");
 		methodBody.append("}\n");
 
 		return methodBody.toString();
@@ -118,14 +119,38 @@ class UnitTestMethodCreator {
 
 	private String getMethodCallLine() {
 		try {
-			SourceMethod sm = (SourceMethod) method;
-			SourceMethodElementInfo info = (SourceMethodElementInfo) sm.getElementInfo();
-			String returnType = new String(info.getReturnTypeName());
-			return "\t" + returnType + " result = " + testedInstanceName + "." + method.getElementName() + "("
+			String returnType = getMethodCallReturnType();
+			String resultValueDef = returnType == null ? "" : returnType + " result = ";
+
+			return "\t" + resultValueDef + testedInstanceName + "." + method.getElementName() + "("
 					+ getParameterNames(method.getParameterNames()) + ");\n";
 		} catch (JavaModelException e) {
 			return "";
 		}
+	}
+
+	private String getCheckResultValueLine() {
+		try {
+			String returnType = getMethodCallReturnType();
+			if (returnType == null) {
+				return "";
+			}
+			return "\t" + "assertThat(result, equalTo(null));";
+		} catch (JavaModelException e) {
+			return "";
+		}
+	}
+
+	private String getMethodCallReturnType() throws JavaModelException {
+		SourceMethod sm = (SourceMethod) method;
+		SourceMethodElementInfo info = (SourceMethodElementInfo) sm.getElementInfo();
+		String returnType = new String(info.getReturnTypeName());
+
+		if (returnType.equals("void")) {
+			return null;
+		}
+
+		return returnType;
 	}
 
 	private String getParameterNames(String[] parameters) {
