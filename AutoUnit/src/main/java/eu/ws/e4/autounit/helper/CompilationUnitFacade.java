@@ -9,16 +9,16 @@ import org.eclipse.jdt.core.IField;
 import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.core.IPackageDeclaration;
 import org.eclipse.jdt.core.JavaModelException;
-import org.eclipse.jdt.core.Signature;
+import org.eclipse.jdt.internal.core.CompilationUnit;
 import org.eclipse.jdt.internal.core.SourceField;
 
 public class CompilationUnitFacade {
 
-	private final ICompilationUnit javaClass;
+	private final CompilationUnit javaClass;
 
 	public CompilationUnitFacade(ICompilationUnit javaClass) {
 		super();
-		this.javaClass = javaClass;
+		this.javaClass = (CompilationUnit) javaClass;
 	}
 
 	/**
@@ -58,9 +58,6 @@ public class CompilationUnitFacade {
 			IField[] fields = javaClass.findPrimaryType().getFields();
 			for (int i = 0; i < fields.length; i++) {
 				SourceField iField = (SourceField) fields[i];
-
-				System.out.println("Field name:" + iField.getElementName());
-				System.out.println("Field type signature:" + Signature.toString(iField.getTypeSignature()));
 				result.add(iField);
 			}
 
@@ -81,6 +78,21 @@ public class CompilationUnitFacade {
 		}
 
 		return "";
+	}
+
+	public String getClassName() {
+		return new String(javaClass.getMainTypeName());
+	}
+
+	public String getSourceCode() {
+		String sourceCode = "";
+		try {
+			sourceCode = javaClass.getSource();
+		} catch (JavaModelException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return sourceCode;
 	}
 
 }

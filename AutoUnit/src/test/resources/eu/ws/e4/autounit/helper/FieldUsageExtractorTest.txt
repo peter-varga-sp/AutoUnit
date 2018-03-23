@@ -1,0 +1,74 @@
+package com.drei.smarthome.backend.business.requestprocessor;
+
+import org.apache.commons.lang3.Validate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.drei.smarthome.backend.business.BusinessException;
+import com.drei.smarthome.backend.db.dao.LogicDao;
+import com.drei.smarthome.backend.db.model.logic.Logic;
+import com.drei.smarthome.backend.db.model.logic.Logic.Status;
+import com.drei.smarthome.backend.db.model.logic.LogicIdStoredOnRouter.IdType;
+import com.drei.smarthome.backend.db.model.util.LogicFacade;
+import com.drei.smarthome.backend.model.inbound.PresenceSimulationLogicCreatedResponse;
+import com.drei.smarthome.backend.model.outbound.NoResponse;
+import com.drei.smarthome.backend.model.outbound.OutboundBackendMessage;
+import com.drei.smarthome.backend.scheduler.presencesimulation.PresenceSimulationJobParameter;
+import com.drei.smarthome.backend.scheduler.presencesimulation.PresenceSimulationSchedulerService;
+
+import lombok.NonNull;
+
+// FIXME PV [] (29.11.2017): Create unit test 
+@Service(value = "presenceSimulationLogicCreatedProcessor")
+public class PresenceSimulationLogicCreatedProcessor
+		implements BusinessRequestProcessor<PresenceSimulationLogicCreatedResponse, OutboundBackendMessage> {
+
+	// Logger instance
+	static final Logger log = LoggerFactory.getLogger(PresenceSimulationLogicCreatedProcessor.class);
+
+	@Autowired
+	private LogicDao logicDao;
+
+	@Autowired
+	private PresenceSimulationSchedulerService presenceSimulationSchedulerService;
+	
+	@Autowired
+	private GatewayDao gatewayDao;
+
+	@Override
+	public OutboundBackendMessage process(@NonNull PresenceSimulationLogicCreatedResponse response) throws BusinessException {
+		log.info("Entering process(). Parameter: {} ", response);
+
+		Logic logic = logicDao.findOne(response.getLogicId());
+		Validate.notNull(logic, "Logic not found with id " + response.getLogicId() + " Inconsistent state!");
+
+		if (response.getResult().isSucceeded()) {
+			logicCreationSucceeded(response, logic);
+		} else {
+			logicDao.delete(logic);
+		}
+
+		presenceSimulationSchedulerService.refresh();
+
+		return NoResponse.getInstance();
+	}
+
+	private void logicCreationSucceeded(PresenceSimulationLogicCreatedResponse response, Logic logic) {
+		gatewayDao.registerResponse(response, logic);
+	
+		logic.setStatus(Status.READY);
+		LogicFacade logicFacade = LogicFacade.of(logic);
+
+		logicFacade.addIdsFromRouter(IdType.ACTION_ID, response.getActionIds());
+		logicFacade.addIdsFromRouter(IdType.RULE_ID, response.getRuleIds());
+		logicFacade.addIdsFromRouter(IdType.SCENARIO_ID, response.getScenarioIds());
+
+		log.info("Logic saved in database: {}", logic);
+		logicDao.save(logic);
+
+		presenceSimulationSchedulerService.schedule(new PresenceSimulationJobParameter(response.getGatewayId(), logic));
+	}
+
+}

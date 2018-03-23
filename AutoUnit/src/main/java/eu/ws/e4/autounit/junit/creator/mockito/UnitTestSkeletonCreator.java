@@ -5,8 +5,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import javax.swing.plaf.ListUI;
-
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.text.WordUtils;
@@ -16,7 +14,6 @@ import org.eclipse.jdt.core.Signature;
 import org.eclipse.jdt.internal.core.SourceField;
 
 import eu.ws.e4.autounit.junit.CreateTestFileContentParameter;
-import junit.textui.TestRunner;
 
 class UnitTestSkeletonCreator {
 
@@ -26,6 +23,7 @@ class UnitTestSkeletonCreator {
 			"import static org.mockito.Mockito.when",
 			"import org.exparity.hamcrest.date.LocalDateTimeMatchers",
 			"import org.junit.Test",
+			"import org.junit.Before",
 			"import org.junit.runner.RunWith",
 			"import org.mockito.InjectMocks",
 			"import org.mockito.Mock",
@@ -36,6 +34,7 @@ class UnitTestSkeletonCreator {
 	private static final String[] TEST_CLASS_SKELETON = {
 			"public class TEST_CLASS_NAME {",
 			"//VARIABLES",
+			"//INIT_DEPENDENCIES",
 			"//TEST_METHODS",
 			"}"
 	};
@@ -61,6 +60,9 @@ class UnitTestSkeletonCreator {
 		String skeleton = StringUtils.join(TEST_CLASS_SKELETON, "\n");
 		skeleton = skeleton.replace("TEST_CLASS_NAME", parameterObject.getTestClassName());
 		skeleton = skeleton.replace("//VARIABLES", declareFields());
+		DependencyMockGenerator dependencyMockGenerator = new DependencyMockGenerator(parameterObject);
+
+		skeleton = skeleton.replace("//INIT_DEPENDENCIES", dependencyMockGenerator.getInitMethodWithMockedCalls());
 
 		return strRunnerDef + skeleton;
 	}
@@ -136,4 +138,5 @@ class UnitTestSkeletonCreator {
 					" = new " + parameterObject.getNameOfClassUnderTest() + "();";
 		}
 	}
+
 }

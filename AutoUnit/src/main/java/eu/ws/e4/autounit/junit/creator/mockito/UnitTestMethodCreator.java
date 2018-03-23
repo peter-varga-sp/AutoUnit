@@ -88,10 +88,10 @@ class UnitTestMethodCreator {
 		return Collections.emptyList();
 	}
 
-	private String getBeanDeclatationLine() {
-		return "\t" + parameterObject.getNameOfClassUnderTest() + " " + testedInstanceName + " = new " + parameterObject.getNameOfClassUnderTest()
-				+ "();";
-	}
+	// private String getBeanDeclatationLine() {
+	// return "\t" + parameterObject.getNameOfClassUnderTest() + " " + testedInstanceName + " = new " + parameterObject.getNameOfClassUnderTest()
+	// + "();";
+	// }
 
 	private String getParameterDeclarationLines() {
 		ArrayList<String> parameterDeclarations = new ArrayList<>();
