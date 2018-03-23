@@ -52,17 +52,39 @@ public class DependencyMockGenerator {
 			}
 
 			for (MethodCallDetail methodCallDetail : usagesOfField.getMethodCallDetails()) {
-				// IMethod calledMethod = getMethodsOfDependencyField(sourceField, methodCallDetail);
-
 				String methodCallMock = "when(" + dependencyFieldName + "." + methodCallDetail.getMethodName() + "("
 						+ calculateParameters(methodCallDetail)
 						+ ")).thenReturn(null);";
 				dependencyCallInitializers.add(methodCallMock);
 			}
-
 		}
 
 		return dependencyCallInitializers;
+	}
+
+	public List<String> getVerifyCallsOfdependencyFields() {
+		List<String> dependencyCallVerifyers = new ArrayList<>();
+
+		List<SourceField> mockableFields = parameterObject.getCuFacade().getMockableFields();
+		String sourceCode = parameterObject.getCuFacade().getSourceCode();
+
+		for (SourceField sourceField : mockableFields) {
+			String dependencyFieldName = sourceField.getElementName();
+
+			DependencyMethodCallInfo usagesOfField = new FieldUsageExtractor().findUsages(sourceCode, dependencyFieldName);
+			if (!usagesOfField.methodCallFound()) {
+				continue;
+			}
+
+			for (MethodCallDetail methodCallDetail : usagesOfField.getMethodCallDetails()) {
+				String mockitoTimesLine = "verify(" + dependencyFieldName + ", times(1))." + methodCallDetail.getMethodName() + "("
+						+ calculateParameters(methodCallDetail)
+						+ ");";
+				dependencyCallVerifyers.add(mockitoTimesLine);
+			}
+		}
+
+		return dependencyCallVerifyers;
 	}
 
 	private String calculateParameters(MethodCallDetail methodCallDetail) {

@@ -38,9 +38,16 @@ class UnitTestMethodCreator {
 		methodBody.append(getParameterDeclarationLines()).append("\n\n");
 		methodBody.append(getMethodCallLine()).append("\n");
 		methodBody.append(getCheckResultValueLine()).append("\n");
+		methodBody.append("\n").append(getVerifyDependencyCallLines()).append("\n");
 		methodBody.append("}\n");
 
 		return methodBody.toString();
+	}
+
+	private Object getVerifyDependencyCallLines() {
+		DependencyMockGenerator dependencyMockGenerator = new DependencyMockGenerator(parameterObject);
+		List<String> verifyCallsOfdependencyFields = dependencyMockGenerator.getVerifyCallsOfdependencyFields();
+		return StringUtils.join(verifyCallsOfdependencyFields, "\n");
 	}
 
 	private String calculateTestMethodName() {

@@ -21,6 +21,9 @@ class UnitTestSkeletonCreator {
 			"import static org.hamcrest.CoreMatchers.equalTo",
 			"import static org.junit.Assert.assertThat",
 			"import static org.mockito.Mockito.when",
+			"import static org.mockito.Mockito.times",
+			"import static org.mockito.Mockito.verify",
+
 			"import org.exparity.hamcrest.date.LocalDateTimeMatchers",
 			"import org.junit.Test",
 			"import org.junit.Before",
