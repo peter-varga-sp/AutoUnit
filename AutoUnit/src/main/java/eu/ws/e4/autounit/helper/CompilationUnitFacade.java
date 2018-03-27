@@ -44,11 +44,9 @@ public class CompilationUnitFacade {
 
 	private boolean isMethodTestable(IMethod iMethod) throws JavaModelException {
 		int flags = iMethod.getFlags();
-
 		if (Flags.isPublic(flags) || Flags.isPackageDefault(flags) || Flags.isProtected(flags)) {
 			return true;
 		}
-
 		return false;
 	}
 
@@ -58,7 +56,10 @@ public class CompilationUnitFacade {
 			IField[] fields = javaClass.findPrimaryType().getFields();
 			for (int i = 0; i < fields.length; i++) {
 				SourceField iField = (SourceField) fields[i];
-				result.add(iField);
+				int flags = iField.getFlags();
+				if (!Flags.isFinal(flags)) {
+					result.add(iField);
+				}
 			}
 
 		} catch (JavaModelException e) {

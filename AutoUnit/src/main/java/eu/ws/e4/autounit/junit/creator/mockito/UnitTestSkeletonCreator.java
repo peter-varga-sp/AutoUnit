@@ -13,6 +13,7 @@ import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.Signature;
 import org.eclipse.jdt.internal.core.SourceField;
 
+import eu.ws.e4.autounit.helper.ImportStatementExtractor;
 import eu.ws.e4.autounit.junit.CreateTestFileContentParameter;
 
 class UnitTestSkeletonCreator {
@@ -75,7 +76,11 @@ class UnitTestSkeletonCreator {
 	}
 
 	private String getImportStatements() {
-		return StringUtils.join(IMPORTS, ";\n") + ";\n";
+		String sourceCode = parameterObject.getCuFacade().getSourceCode();
+		ImportStatementExtractor importStatementExtractor = new ImportStatementExtractor();
+		List<String> foundImportStatementList = importStatementExtractor.findImportStatements(sourceCode);
+
+		return StringUtils.join(IMPORTS, ";\n") + ";\n\n" + StringUtils.join(foundImportStatementList, "\n") + "\n";
 	}
 
 	private String declareFields() {
